@@ -38,6 +38,7 @@ CREATE TABLE Assignment(
     courseID char(6) REFERENCES Course(courseID),
     title varchar(255) NOT NULL,
     description text,
+    maxGrade float,
     dateAssigned date,
     dateDue date,
     PRIMARY KEY(assignmentID, courseID)
@@ -49,6 +50,8 @@ CREATE TABLE AssignmentAttempt (
     courseID char(6),
     dateSubmitted date,
     timeSubmitted time,
+    fileName text, 
+    fileUpload oid,
     FOREIGN KEY (assignmentID, courseID) REFERENCES Assignment(assignmentID, courseID),
     PRIMARY KEY(studentID, assignmentID)
 );
