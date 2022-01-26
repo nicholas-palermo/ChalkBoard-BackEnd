@@ -105,7 +105,7 @@ app.use(express.json()); // => allows us to access to the req.body
 //READ
 
     //get a student during login
-    app.get("/login/:email"), async(req,res) => {
+    app.get("/login/:email", async(req,res) => {
         try {
             const { email } = req.params;
             const student = await pool.query ("SELECT * FROM Student WHERE email = $1", [email])
@@ -114,11 +114,11 @@ app.use(express.json()); // => allows us to access to the req.body
         } catch (err) {
             console.error(err.message);
         }
-    }
+    })
 
 
     //get a faculty member
-    app.get("/:facultyID/"), async(req,res) => {
+    app.get("/:facultyID/", async(req,res) => {
         try {
             const {facultyID} = req.params;
             const faculty = await pool.query ("SELECT * FROM Faculty WHERE facultyID = $1", [facultyID])
@@ -127,10 +127,10 @@ app.use(express.json()); // => allows us to access to the req.body
         } catch (err) {
             console.error(err.message);
         }
-    }
+    })
 
     //get a student's courses
-    app.get("/:studentID/"), async(req, res) => {
+    app.get("/:studentID/", async(req, res) => {
         try {
             const { studentID } = req.params;
             const studentCourses = await pool.query("SELECT * FROM StudentCourse WHERE studentID = $1", [studentID]);
@@ -139,7 +139,7 @@ app.use(express.json()); // => allows us to access to the req.body
         } catch (err) {
             console.error(err.message);
         }
-    }
+    })
 
 /*
     //get a course
