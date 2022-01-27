@@ -47,9 +47,21 @@ app.use(express.json()); // => allows us to access to the req.body
     app.post("/newCourse", async(req, res) => {
         try {
             const { courseID, courseName, facultyID, term, courseSubject } = req.body;
-            console.log(req.body);
             const newCourse = await pool.query("INSERT INTO Course (courseID, courseName, facultyID, term, courseSubject) VALUES ($1, $2, $3, $4, $5) RETURNING *", 
             [courseID, courseName, facultyID, term, courseSubject]);
+
+            res.json(newCourse.rows[0]);
+        } catch (err) {
+            console.error(err.message);
+        }
+    })
+
+    //create a student course (enroll a student in a course)
+    app.post("/newStudentCourse", async(req, res) => {
+        try {
+            const { studentID, courseID, term } = req.body;
+            const newCourse = await pool.query("INSERT INTO studentCourse (studentID, courseID, term) VALUES ($1, $2, $3) RETURNING *", 
+            [studentID, courseID, term]);
 
             res.json(newCourse.rows[0]);
         } catch (err) {
@@ -142,19 +154,6 @@ app.use(express.json()); // => allows us to access to the req.body
     })
 
 
-    //get a course
-    app.get("/:term/:courseID"), async(req, res) => {
-        try {
-            const { term, courseID } = req.params;
-            const course = await pool.query("SELECT * FROM Course WHERE term = $1 AND courseID = $2", [term, courseID]);
-
-            res.json(course.rows);
-        } catch (err) {
-            console.error(err.message);
-        }
-    }
-
-
     //get a courses assignment's
      app.get("/Assignments/:courseID", async(req, res) => {
         try {
@@ -205,8 +204,21 @@ app.use(express.json()); // => allows us to access to the req.body
         }
     }
 
+    //get a grade for a student's assignment attempt
+    app.get("/grades/:studentID/:assignmentID", async(req, res) => {
+        try {
+            const { studentID, assignmentID } = req.params;
+            const grade = await pool.query("SELECT * FROM Grade WHERE studentID = $1 AND assignmentID = $2", [studentID, assignmentID]);
+
+            res.json(grade.rows[0]);
+        } catch (err) {
+            console.error(err.message);
+        }
+    })
+
+
     //get all students' grades for a course
-    app.get("/:term/:courseID/grades"), async(req,res) => {
+    app.get("/:courseID/grades"), async(req,res) => {
         
         try {
             const { term, courseID } = req.params;
