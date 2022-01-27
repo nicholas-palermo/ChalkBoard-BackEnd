@@ -118,7 +118,7 @@ app.use(express.json()); // => allows us to access to the req.body
 
 
     //get a faculty member
-    app.get("/:facultyID/", async(req,res) => {
+    app.get("/faculty/:facultyID/", async(req,res) => {
         try {
             const {facultyID} = req.params;
             const faculty = await pool.query ("SELECT * FROM Faculty WHERE facultyID = $1", [facultyID])
@@ -130,7 +130,7 @@ app.use(express.json()); // => allows us to access to the req.body
     })
 
     //get a student's courses
-    app.get("/:studentID/", async(req, res) => {
+    app.get("/courses/:studentID", async(req, res) => {
         try {
             const { studentID } = req.params;
             const studentCourses = await pool.query("SELECT * FROM StudentCourse WHERE studentID = $1", [studentID]);
@@ -141,17 +141,20 @@ app.use(express.json()); // => allows us to access to the req.body
         }
     })
 
-/*
+
     //get a course
-    app.get(), async(req, res) => {
+    app.get("/:term/:courseID"), async(req, res) => {
         try {
-           
+            const { term, courseID } = req.params;
+            const course = await pool.query("SELECT * FROM Course WHERE term = $1 AND courseID = $2", [term, courseID]);
+
+            res.json(course.rows);
         } catch (err) {
             console.error(err.message);
         }
     }
 
-*/
+
     //get a courses assignment's
      app.get("/Assignments/:courseID", async(req, res) => {
         try {
@@ -166,19 +169,55 @@ app.use(express.json()); // => allows us to access to the req.body
 
     
     //get an assignment
-   
-
-
-    //get a student's grades
-    app.get("/Grades"), async(req, res) => {
+    app.get("/:courseID/:assignmentID", async(req, res) => {
         try {
-           
+            const {courseID, assignmentID} = req.params;
+            const assignment = await pool.query("SELECT * FROM Assignment WHERE courseID = $1 AND assignmentID = $2", [courseID, assignmentID]);
+
+            res.json(assignment.rows);
+        } catch (err) {
+            console.error(err.message);
+        }
+    })
+
+
+    //get all of a student's grades
+    app.get("/Grades/:studentID"), async(req, res) => {
+        try {
+            const { studentID } = req.params;
+            const studentGrades = await pool.query("SELECT * FROM Grade WHERE studentID = $1", [studentID]);
+
+            res.json(studentCourses.rows);
         } catch (err) {
             console.error(err.message);
         }
     }
 
+    //get all of a student's grades from a course
+    app.get("Grades/:studentID/:courseID"), async(req, res) => {
+        try {
+            const { studentID, courseID } = req.params;
+            const studentCourseGrades = await pool.query("SELECT * FROM Grade WHERE studentID = $1 AND courseID = $2", [studentID, courseID]);
 
+            res.json(studentCourses.rows);
+        } catch (err) {
+            console.error(err.message);
+        }
+    }
+
+    //get all students' grades for a course
+    app.get("/:term/:courseID/grades"), async(req,res) => {
+        
+        try {
+            const { term, courseID } = req.params;
+            const allGradesFromCourse = await pool.query("SELECT * FROM Grade WHERE term = $1 AND courseID = $2", [term, courseID]) 
+
+            res.json(allGradesFromCourse.rows);
+        } catch (error) {
+            console.error(err.message);
+        }
+        
+    }
 
 //UPDATE
 
