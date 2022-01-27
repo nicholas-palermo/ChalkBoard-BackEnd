@@ -153,6 +153,17 @@ app.use(express.json()); // => allows us to access to the req.body
         }
     })
 
+    //get 3 most recent  of a student's grades
+    app.get("/recentGrades/:studentID", async(req, res) => {
+        try {
+            const { studentID } = req.params;
+            const recentGrades = await pool.query("SELECT * FROM Grade g INNER JOIN Assignment a ON g.assignmentID = a.assignmentID WHERE studentid = $1", [studentID]);
+
+            res.json(recentGrades.rows);
+        } catch (err) {
+            console.error(err.message);
+        }
+    })
 
     //get a courses assignment's
      app.get("/Assignments/:courseID", async(req, res) => {
@@ -179,21 +190,10 @@ app.use(express.json()); // => allows us to access to the req.body
         }
     })
 
-
-    //get all of a student's grades
-    app.get("/Grades/:studentID"), async(req, res) => {
-        try {
-            const { studentID } = req.params;
-            const studentGrades = await pool.query("SELECT * FROM Grade WHERE studentID = $1", [studentID]);
-
-            res.json(studentCourses.rows);
-        } catch (err) {
-            console.error(err.message);
-        }
-    }
+    
 
     //get all of a student's grades from a course
-    app.get("Grades/:studentID/:courseID"), async(req, res) => {
+    app.get("Grades/:studentID/:courseID", async(req, res) => {
         try {
             const { studentID, courseID } = req.params;
             const studentCourseGrades = await pool.query("SELECT * FROM Grade WHERE studentID = $1 AND courseID = $2", [studentID, courseID]);
@@ -202,7 +202,7 @@ app.use(express.json()); // => allows us to access to the req.body
         } catch (err) {
             console.error(err.message);
         }
-    }
+    })
 
     //get a grade for a student's assignment attempt
     app.get("/grades/:studentID/:assignmentID", async(req, res) => {
@@ -218,7 +218,7 @@ app.use(express.json()); // => allows us to access to the req.body
 
 
     //get all students' grades for a course
-    app.get("/:courseID/grades"), async(req,res) => {
+    app.get("/:courseID/grades", async(req,res) => {
         
         try {
             const { term, courseID } = req.params;
@@ -229,7 +229,7 @@ app.use(express.json()); // => allows us to access to the req.body
             console.error(err.message);
         }
         
-    }
+    })
 
 //UPDATE
 
